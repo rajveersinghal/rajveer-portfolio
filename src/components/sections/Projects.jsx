@@ -50,6 +50,52 @@ const projects = [
         link: "https://github.com/rajveersinghal/AnalytixAI"
     },
     {
+        title: "YouTube Summarizer (RAG)",
+        category: "LLM · LangChain",
+        desc: "Interactive RAG pipeline specialized in summarizing long-form video transcripts using OpenAI.",
+        explanation: "Built a document retrieval system using LangChain and a Vector Database (ChromaDB) to provide context-aware summaries.",
+        impact: "Reduced information extraction time for 1-hour videos to under 30 seconds of reading.",
+        tech: ["LangChain", "OpenAI", "Python", "ChromaDB"],
+        metrics: [
+            { label: "Retrieval", value: 95 },
+            { label: "Latency", value: 85 },
+            { label: "RAGas Score", value: 82 }
+        ],
+        hasDemo: true,
+        demoType: "RAG Pipeline Simulation",
+        demoLines: [
+            { text: "# Extracting Transcript via API...", color: "text-blue-400" },
+            { text: "Chunking text into 500-token segments...", color: "text-text-secondary" },
+            { text: "Generating Embeddings (ADA-002)...", color: "text-text-secondary" },
+            { text: "Query: 'What are the core ML findings?'", color: "text-yellow-500/80" },
+            { text: "RAG RESPONSE: 3 key findings extracted.", color: "text-accent", bold: true }
+        ],
+        link: "https://github.com/rajveersinghal/YouTubeSummarizer"
+    },
+    {
+        title: "Movie Recommendation",
+        category: "RecSys · Similarity",
+        desc: "Content-based recommendation engine using cosine similarity to suggest movies.",
+        explanation: "Developed a similarity matrix across a 50k+ movie dataset based on genre, cast, and keyword metadata.",
+        impact: "Implemented a cold-start resistant engine that performs with sub-hundred millisecond latency.",
+        tech: ["Python", "Pandas", "Scikit-Learn", "NLTK"],
+        metrics: [
+            { label: "Latency", value: 98 },
+            { label: "Precision@K", value: 76 },
+            { label: "Recall@K", value: 81 }
+        ],
+        hasDemo: true,
+        demoType: "Similarity Matrix Search",
+        demoLines: [
+            { text: "# Input: 'The Inception'...", color: "text-blue-400" },
+            { text: "Filtering Metadata: Sci-Fi, Nolan, Thriller", color: "text-text-secondary" },
+            { text: "Calculating Cosine Similarity Matrix...", color: "text-text-secondary" },
+            { text: "TOP MATCH: 'Interstellar' (0.89)", color: "text-accent", bold: true },
+            { text: "Other: Tenet (0.84), Shutter Island (0.78)", color: "text-text-secondary text-xs" }
+        ],
+        link: "https://github.com/rajveersinghal/MovieRecommendation"
+    },
+    {
         title: "House Price Predictor",
         category: "Regression · XGBoost",
         desc: "ML model predicting real estate prices based on nuanced environmental factors.",
@@ -71,6 +117,29 @@ const projects = [
             { text: "Confidence Interval: +/- ₹4.5L", color: "text-text-secondary text-xs" }
         ],
         link: "https://github.com/rajveersinghal/HousePricePrediction"
+    },
+    {
+        title: "Netflix Data Dashboard",
+        category: "Analytics · Power BI",
+        desc: "Comprehensive business intelligence dashboard analyzing Netflix content trends.",
+        explanation: "Created interactive visualizations covering geographic content distribution, genre saturation, and release timing.",
+        impact: "Identified optimal release windows and high-growth genre clusters in the APAC region.",
+        tech: ["Power BI", "SQL", "Excel", "Data Cleaning"],
+        metrics: [
+            { label: "Data Integrity", value: 100 },
+            { label: "Insight Depth", value: 90 },
+            { label: "UI Rating", value: 95 }
+        ],
+        hasDemo: true,
+        demoType: "BI Dashboard Insight",
+        demoLines: [
+            { text: "# Refreshing Power BI Dataset...", color: "text-blue-400" },
+            { text: "Calculating YoY Content Growth (APAC)...", color: "text-text-secondary" },
+            { text: "Slicing by: 'Originals vs Licensed'", color: "text-text-secondary" },
+            { text: "TREND: 30% Increase in K-Dramas", color: "text-accent", bold: true },
+            { text: "Optimal Release Day: Friday (8PM IST)", color: "text-text-secondary text-xs" }
+        ],
+        link: "https://github.com/rajveersinghal/NetflixDashboard"
     }
 ];
 
