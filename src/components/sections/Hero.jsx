@@ -1,202 +1,179 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect, Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Float, PerspectiveCamera, OrbitControls } from '@react-three/drei';
+import NeuralScene from '../ui/NeuralScene';
 
-const positions = [
-    { left: '10%', top: '20%' },
-    { left: '80%', top: '15%' },
-    { left: '25%', top: '75%' },
-    { left: '70%', top: '80%' },
-    { left: '50%', top: '40%' },
-    { left: '15%', top: '50%' },
-    { left: '85%', top: '60%' },
+const roles = ["Data Scientist", "ML Engineer", "NLP Specialist", "Data Analyst", "AI Researcher"];
+
+const stats = [
+    { label: "Projects", value: "6+", icon: "inventory_2" },
+    { label: "Accuracy", value: "92%", icon: "insights" },
+    { label: "Tech Stack", value: "15+", icon: "layers" },
 ];
 
 export default function Hero() {
-    const containerRef = useRef(null);
     const [currentRole, setCurrentRole] = useState(0);
-    const roles = ["Data Scientist", "Machine Learning Engineer", "Data Analyst", "NLP Specialist"];
-
-    // Mouse Tracking for Interactive Animation
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-    const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-
-    useEffect(() => {
-        const handleMouseMove = (e) => {
-            const { clientX, clientY } = e;
-            const { innerWidth, innerHeight } = window;
-            mouseX.set((clientX / innerWidth - 0.5) * 40);
-            mouseY.set((clientY / innerHeight - 0.5) * 40);
-        };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [mouseX, mouseY]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentRole((prev) => (prev + 1) % roles.length);
-        }, 3000);
-        return () => clearInterval(interval);
-    }, []);
-
+    const [charIndex, setCharIndex] = useState(0);
+    const [displayText, setDisplayText] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
     const { scrollYProgress } = useScroll();
-    const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-    const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
+    const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -80]);
+
+    // Typewriter effect
+    useEffect(() => {
+        const target = roles[currentRole];
+        const speed = isDeleting ? 40 : 85;
+
+        const timeout = setTimeout(() => {
+            if (!isDeleting && charIndex < target.length) {
+                setDisplayText(target.substring(0, charIndex + 1));
+                setCharIndex(c => c + 1);
+            } else if (isDeleting && charIndex > 0) {
+                setDisplayText(target.substring(0, charIndex - 1));
+                setCharIndex(c => c - 1);
+            } else if (!isDeleting && charIndex === target.length) {
+                setTimeout(() => setIsDeleting(true), 2000);
+            } else if (isDeleting && charIndex === 0) {
+                setIsDeleting(false);
+                setCurrentRole(r => (r + 1) % roles.length);
+            }
+        }, speed);
+
+        return () => clearTimeout(timeout);
+    }, [charIndex, isDeleting, currentRole]);
 
     return (
-        <section
-            id="hero"
-            ref={containerRef}
-            className="h-screen flex items-center px-6 md:px-20 relative overflow-hidden snap-start"
-        >
-            {/* Advanced Reactive Background */}
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-                <motion.div
-                    style={{ x: springX, y: springY }}
-                    className="w-full h-full relative"
-                >
-                    {/* SVG Connections Layer */}
-                    <svg className="absolute inset-0 w-full h-full">
-                        {positions.map((pos, i) => (
-                            positions.slice(i + 1, i + 3).map((target, j) => (
-                                <motion.line
-                                    key={`${i}-${j}`}
-                                    x1={pos.left} y1={pos.top}
-                                    x2={target.left} y2={target.top}
-                                    className="stroke-accent/20"
-                                    initial={{ pathLength: 0, opacity: 0 }}
-                                    animate={{ pathLength: 1, opacity: 1 }}
-                                    transition={{ duration: 2, delay: i * 0.2 }}
-                                />
-                            ))
-                        ))}
-                    </svg>
-
-                    {/* Nodes Layer */}
-                    {positions.map((pos, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute w-4 h-4 rounded-full bg-accent/30 border border-accent/50"
-                            style={{
-                                left: pos.left,
-                                top: pos.top,
-                                boxShadow: '0 0 15px var(--color-accent)'
-                            }}
-                            animate={{
-                                scale: [1, 1.2, 1],
-                                opacity: [0.3, 0.6, 0.3]
-                            }}
-                            transition={{
-                                duration: 3 + i,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                        />
-                    ))}
-
-                    {/* Floating Data Particles */}
-                    {[...Array(15)].map((_, i) => (
-                        <motion.div
-                            key={`p-${i}`}
-                            className="absolute w-1 h-1 bg-accent rounded-full"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`
-                            }}
-                            animate={{
-                                y: [0, -100, 0],
-                                x: [0, Math.random() * 50 - 25, 0],
-                                opacity: [0, 0.8, 0]
-                            }}
-                            transition={{
-                                duration: 5 + Math.random() * 10,
-                                repeat: Infinity,
-                                delay: Math.random() * 5
-                            }}
-                        />
-                    ))}
-                </motion.div>
+        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#020510]">
+            {/* 3D Neural Background */}
+            <div className="absolute inset-0 z-0">
+                <Canvas dpr={[1, 1.5]}>
+                    <PerspectiveCamera makeDefault position={[0, 0, 12]} fov={60} />
+                    <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} enableDamping />
+                    <ambientLight intensity={0.3} />
+                    <pointLight position={[10, 10, 10]} intensity={0.8} color="#00d4ff" />
+                    <pointLight position={[-10, -10, -10]} intensity={0.4} color="#a855f7" />
+                    <Suspense fallback={null}>
+                        <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1}>
+                            <NeuralScene />
+                        </Float>
+                    </Suspense>
+                </Canvas>
             </div>
 
+            {/* Atmospheric layers */}
+            <div className="absolute inset-0 z-[1] pointer-events-none">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,212,255,0.06)_0%,transparent_70%)]" />
+                <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#020510] to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#020510]/80 to-transparent" />
+            </div>
+
+            {/* Grid overlay */}
+            <div className="absolute inset-0 z-[1] grid-overlay pointer-events-none opacity-40" />
+
+            {/* Hero Content */}
             <motion.div
-                style={{ opacity, scale }}
-                className="max-w-4xl z-10"
+                style={{ opacity: heroOpacity, y: heroY }}
+                className="relative z-10 text-center max-w-6xl mx-auto px-6 pt-32 pb-16"
             >
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="flex items-center gap-3 mb-6"
-                >
-                    <span className="px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-bold uppercase tracking-wider">
-                        Available for Opportunities
-                    </span>
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-text-secondary text-sm font-medium">New Delhi, India</span>
-                </motion.div>
-
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-6xl md:text-8xl font-black text-text-primary mb-6 leading-tight"
-                >
-                    Rajveer <span className="text-accent underline decoration-4 underline-offset-8">Singhal</span>
-                </motion.h1>
-
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="h-12 md:h-16 flex items-center mb-8"
-                >
-                    <span className="text-2xl md:text-4xl text-text-secondary font-medium mr-4">I am a</span>
-                    <div className="overflow-hidden">
-                        <motion.span
-                            key={currentRole}
-                            initial={{ y: 40, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -40, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 100 }}
-                            className="text-2xl md:text-4xl text-accent font-bold block"
-                        >
-                            {roles[currentRole]}
-                        </motion.span>
-                    </div>
-                </motion.div>
-
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-lg md:text-xl text-text-secondary max-w-2xl mb-10 leading-relaxed"
-                >
-                    Bridging the gap between raw data and actionable intelligence. I focus on building <span className="text-text-primary font-bold">interpretable ML systems</span> and <span className="text-text-primary font-bold">scalable NLP pipelines</span>.
-                </motion.p>
-
+                {/* Status badge */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                        type: "spring",
-                        stiffness: 70,
-                        damping: 15,
-                        delay: 0.6
-                    }}
-                    className="flex flex-wrap gap-4"
+                    transition={{ duration: 0.6 }}
+                    className="flex items-center justify-center gap-3 mb-10"
                 >
-                    <a href="#projects" className="px-8 py-3 rounded-lg bg-accent text-bg-dark font-bold hover:bg-accent-hover transition-all shadow-[0_0_20px_rgba(0,229,255,0.25)] hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] transform hover:-translate-y-1">
-                        Explore My Work
+                    <div className="section-label">
+                        <div className="status-dot scale-75"></div>
+                        Available for Opportunities · New Delhi, India
+                    </div>
+                </motion.div>
+
+                {/* Main headline */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.1 }}
+                >
+                    <h1 className="font-headline font-black text-[clamp(3rem,9vw,7rem)] leading-[0.95] tracking-tight text-on-surface mb-6">
+                        <span className="block text-glow text-primary">RAJVEER</span>
+                        <span className="block text-on-surface">SINGHAL</span>
+                    </h1>
+                </motion.div>
+
+                {/* Typewriter role */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="flex items-center justify-center gap-3 mb-10"
+                >
+                    <span className="font-mono text-on-surface-variant text-lg md:text-2xl">~/</span>
+                    <div className="font-mono text-lg md:text-2xl text-primary font-medium min-w-[300px] text-left">
+                        <span className="blink-cursor">{displayText}</span>
+                    </div>
+                </motion.div>
+
+                {/* Summary */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12 font-light"
+                >
+                    Building <span className="text-primary font-medium">interpretable ML systems</span> and{' '}
+                    <span className="text-secondary font-medium">scalable NLP pipelines</span> that transform
+                    raw data into actionable intelligence.
+                </motion.p>
+
+                {/* Stats row */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.8 }}
+                    className="flex items-center justify-center gap-8 mb-12"
+                >
+                    {stats.map((stat, i) => (
+                        <div key={stat.label} className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-primary text-lg">{stat.icon}</span>
+                            <span className="font-mono font-bold text-on-surface text-xl">{stat.value}</span>
+                            <span className="text-on-surface-variant text-xs uppercase tracking-widest font-mono">{stat.label}</span>
+                            {i < stats.length - 1 && <div className="ml-8 w-px h-6 bg-outline-variant/50"></div>}
+                        </div>
+                    ))}
+                </motion.div>
+
+                {/* CTAs */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 1 }}
+                    className="flex flex-wrap items-center justify-center gap-4"
+                >
+                    <a href="#projects" className="btn-primary">
+                        Explore Projects
+                        <span className="material-symbols-outlined text-base">arrow_forward</span>
                     </a>
-                    <a
-                        href="/resume.pdf"
-                        target="_blank"
-                        className="px-8 py-3 rounded-lg border border-accent/30 text-accent font-bold hover:bg-accent/10 transition-all flex items-center gap-2"
-                    >
-                        📄 Download Resume
+                    <a href="https://drive.google.com/uc?export=download&id=1R-nK3tm592MjmWVKb2edHgNuT_9o23da" target="_blank" rel="noopener noreferrer" className="btn-outline">
+                        <span className="material-symbols-outlined text-base">description</span>
+                        Download Resume
                     </a>
                 </motion.div>
+
+                {/* Floating tech tags */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.4, duration: 1 }}
+                    className="flex flex-wrap justify-center gap-2 mt-12 max-w-3xl mx-auto"
+                >
+                    {['Python', 'PyTorch', 'Scikit-learn', 'LangChain', 'SQL', 'Power BI', 'FastAPI', 'NLP'].map((tech) => (
+                        <span key={tech} className="tag">{tech}</span>
+                    ))}
+                </motion.div>
             </motion.div>
+
         </section>
     );
 }

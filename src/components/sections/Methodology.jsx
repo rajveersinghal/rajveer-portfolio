@@ -1,92 +1,92 @@
 import { motion } from 'framer-motion';
-import SectionParams from '../ui/SectionParams';
+import { useState } from 'react';
 
 const steps = [
-    {
-        title: "Data Ingestion",
-        desc: "Automated pipelines for diverse sources (SQL, APIs, Raw Files).",
-        icon: "📥",
-        color: "from-blue-500/20 to-cyan-500/20"
-    },
-    {
-        title: "Wrangling & EDA",
-        desc: "Feature engineering and statistical analysis for model readiness.",
-        icon: "🧹",
-        color: "from-cyan-500/20 to-teal-500/20"
-    },
-    {
-        title: "Modeling & Optimization",
-        desc: "Architecture design, training, and iterative hyperparameter tuning.",
-        icon: "🧠",
-        color: "from-teal-500/20 to-blue-600/20"
-    },
-    {
-        title: "Deployment & Insight",
-        desc: "Model serving via APIs and interactive communication of results.",
-        icon: "🚀",
-        color: "from-blue-600/20 to-accent/20"
-    }
+    { icon: 'download', label: '01', title: 'Ingest', desc: 'Collect and validate from APIs, databases, and raw files.', color: 'primary' },
+    { icon: 'cleaning_services', label: '02', title: 'Wrangle', desc: 'Feature engineer, impute and normalize for model readiness.', color: 'secondary' },
+    { icon: 'model_training', label: '03', title: 'Model', desc: 'Architecture selection, training, and hyperparameter tuning.', color: 'tertiary' },
+    { icon: 'rocket_launch', label: '04', title: 'Deploy', desc: 'Model serving via API, monitoring, and continuous iteration.', color: 'primary' },
 ];
 
+const dotMap = {
+    primary: { icon: 'text-primary', border: 'border-primary/25', bg: 'bg-primary/8', glow: '#00d4ff' },
+    secondary: { icon: 'text-secondary', border: 'border-secondary/25', bg: 'bg-secondary/8', glow: '#a855f7' },
+    tertiary: { icon: 'text-tertiary', border: 'border-tertiary/25', bg: 'bg-tertiary/8', glow: '#10b981' },
+};
+
 export default function Methodology() {
+    const [hovered, setHovered] = useState(null);
+
     return (
-        <SectionParams id="methodology" className="bg-bg-dark relative">
-            <div className="relative z-10 text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">Methodology</h2>
-                <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-                    A rigorous approach to turning raw data into actionable intelligence.
-                </p>
+        <section className="py-24 px-6 lg:px-16 relative bg-surface-container scroll-mt-24" id="methodology">
+            {/* Flowing horizontal line bg */}
+            <div className="absolute inset-0 flex items-center pointer-events-none overflow-hidden">
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
             </div>
 
-            <div className="relative z-10 max-w-5xl mx-auto">
-                {/* Connector Line (Desktop) */}
-                <div className="hidden md:block absolute top-[60px] left-0 w-full h-0.5 bg-gradient-to-r from-accent/0 via-accent/30 to-accent/0" />
+            <div className="max-w-6xl mx-auto">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center mb-16"
+                >
+                    <div className="section-label mx-auto mb-6 w-fit">
+                        <span className="material-symbols-outlined text-sm">route</span>
+                        Analytical Pipeline
+                    </div>
+                    <h2 className="section-title">
+                        System{' '}
+                        <span className="gradient-text-cyan-green">Protocols</span>
+                    </h2>
+                </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    {steps.map((step, idx) => (
+                <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {/* Animated connector */}
+                    <div className="absolute top-12 left-0 right-0 h-px hidden md:block overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-transparent via-outline-variant/30 to-transparent" />
                         <motion.div
-                            key={step.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 50,
-                                damping: 15,
-                                delay: idx * 0.1
-                            }}
-                            className="relative flex flex-col items-center text-center"
-                        >
+                            className="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+                            animate={{ x: ['-100%', '500%'] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+                        />
+                    </div>
+
+                    {steps.map((step, i) => {
+                        const d = dotMap[step.color];
+                        return (
                             <motion.div
-                                whileHover={{ scale: 1.1, rotate: 5 }}
-                                className={`w-28 h-28 rounded-2xl bg-gradient-to-br ${step.color} border border-white/5 flex items-center justify-center text-4xl mb-6 shadow-xl backdrop-blur-sm relative group`}
+                                key={step.title}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.12 }}
+                                onMouseEnter={() => setHovered(i)}
+                                onMouseLeave={() => setHovered(null)}
+                                className="flex flex-col items-center text-center relative"
                             >
-                                <div className="absolute inset-0 rounded-2xl bg-accent/0 group-hover:bg-accent/10 transition-colors" />
-                                {step.icon}
-                                {/* Step Number Badge */}
-                                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-accent text-bg-dark text-sm font-bold flex items-center justify-center border-4 border-bg-dark">
-                                    {idx + 1}
-                                </div>
+                                {/* Icon container */}
+                                <motion.div
+                                    animate={{
+                                        boxShadow: hovered === i
+                                            ? `0 0 0 1px ${d.glow}40, 0 0 20px ${d.glow}25, 0 0 40px ${d.glow}10`
+                                            : '0 0 0 1px transparent'
+                                    }}
+                                    className={`w-24 h-24 rounded-2xl ${d.bg} border ${d.border} flex flex-col items-center justify-center mb-6 relative transition-all duration-300`}
+                                >
+                                    <span className={`font-mono text-[9px] font-bold ${d.icon} mb-1 tracking-widest`}>{step.label}</span>
+                                    <span className={`material-symbols-outlined text-3xl ${d.icon}`}>{step.icon}</span>
+                                </motion.div>
+
+                                <h3 className={`font-headline font-black text-xl mb-2 ${hovered === i ? d.icon : 'text-on-surface'} transition-colors`}>
+                                    {step.title}
+                                </h3>
+                                <p className="text-on-surface-variant text-sm leading-relaxed px-2">{step.desc}</p>
                             </motion.div>
-
-                            <h3 className="text-xl font-bold text-text-primary mb-3 group-hover:text-accent transition-colors">
-                                {step.title}
-                            </h3>
-                            <p className="text-sm text-text-secondary leading-relaxed">
-                                {step.desc}
-                            </p>
-
-                            {/* Mobile Connector */}
-                            {idx !== steps.length - 1 && (
-                                <div className="md:hidden w-px h-12 bg-accent/20 my-4" />
-                            )}
-                        </motion.div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
-
-            {/* Background Decorative Element */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-white/5 to-transparent mt-20" />
-        </SectionParams>
+        </section>
     );
 }

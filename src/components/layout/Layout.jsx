@@ -1,14 +1,23 @@
 import Navbar from './Navbar';
 import Footer from './Footer';
+import Sidebar from './Sidebar';
+import AIChatWidget from '../ui/AIChatWidget';
 
 export default function Layout({ children }) {
     return (
-        <div className="bg-bg-dark min-h-screen flex flex-col font-sans text-text-primary">
+        <div className="bg-background min-h-screen text-on-surface relative">
+            {/* Global grid overlay */}
+            <div className="fixed inset-0 grid-overlay pointer-events-none z-0 opacity-60" />
+
             <Navbar />
-            <main className="flex-grow pt-16">
+            <Sidebar />
+
+            <main className="relative z-10 lg:pl-16">
                 {children}
+                <Footer />
             </main>
-            <Footer />
+
+            <AIChatWidget />
         </div>
     );
 }

@@ -1,287 +1,237 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
-import SectionParams from '../ui/SectionParams';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const projects = [
     {
-        title: "Skill Match",
-        category: "NLP · Machine Learning",
-        desc: "Automated recruitment system matching resumes to job descriptions with high precision.",
-        explanation: "Built a custom text-processing pipeline using NLTK and TF-IDF to convert unstructured text into mathematical vectors.",
-        impact: "Achieved ~92% accuracy in score-based matching compared to expert human manual tagging.",
-        tech: ["Python", "NLTK", "Scikit-Learn", "FastAPI"],
-        metrics: [
-            { label: "Accuracy", value: 92 },
-            { label: "Precision", value: 89 },
-            { label: "Recall", value: 87 }
-        ],
-        hasDemo: true,
-        demoType: "NLP Similarity Engine",
-        demoLines: [
-            { text: "# Loading TF-IDF Vectorizer...", color: "text-blue-400" },
-            { text: "Reading input: 'Senior Data Scientist Resume.pdf'", color: "text-text-secondary" },
-            { text: "Applying Cosine Similarity against JD pool...", color: "text-text-secondary" },
-            { text: "MATCH FOUND: 94.2% FIT", color: "text-accent", bold: true },
-            { text: "Keywords: Python, SQL, NLP, AWS, PyTorch", color: "text-text-secondary text-xs" }
-        ],
-        link: "https://github.com/rajveersinghal/SkillMatch"
+        id: 'skillmatch',
+        title: 'Skill Match',
+        subtitle: 'Intelligent Talent Mapping',
+        category: 'NLP · Transformers',
+        accent: 'primary',
+        tags: ['TF-IDF', 'Cosine Similarity', 'FastAPI', 'Scikit-learn'],
+        metric: { val: '92%', label: 'Match Accuracy' },
+        desc: 'End-to-end NLP pipeline that maps candidate résumés to job descriptions using TF-IDF vectorization and cosine similarity. Achieved 92% match accuracy versus expert annotations.',
+        link: 'https://github.com/rajveersinghal',
+        year: '2024',
     },
     {
-        title: "AnalytixAI",
-        category: "EDA · Automation",
-        desc: "End-to-end automated platform for exploratory data analysis and data cleaning.",
-        explanation: "Developed a Streamlit dashboard that automatically identifies outliers, missing values, and calculates statistical correlations.",
-        impact: "Reduced manual data profiling time by 70% for standard tabular datasets.",
-        tech: ["Python", "Pandas", "Streamlit", "Matplotlib"],
-        metrics: [
-            { label: "Efficiency", value: 70 },
-            { label: "Coverage", value: 100 },
-            { label: "Accuracy", value: 99 }
-        ],
-        hasDemo: true,
-        demoType: "Automated EDA Pipeline",
-        demoLines: [
-            { text: "# Ingesting raw_data.csv...", color: "text-blue-400" },
-            { text: "Scanning 1.2M rows for anomalies...", color: "text-text-secondary" },
-            { text: "Found 12% Missing Values in 'Age' column. Applying Median Imputation.", color: "text-yellow-500/80" },
-            { text: "Normalization Complete (z-score)", color: "text-text-secondary" },
-            { text: "EDA READY: 8 Columns Processed", color: "text-accent", bold: true }
-        ],
-        link: "https://github.com/rajveersinghal/AnalytixAI"
+        id: 'analytixai',
+        title: 'AnalytixAI',
+        subtitle: 'Automated EDA Platform',
+        category: 'EDA · Analytics',
+        accent: 'secondary',
+        tags: ['Pandas', 'Streamlit', 'Plotly', 'NumPy'],
+        metric: { val: '70%', label: 'Time Saved' },
+        desc: 'Full-stack automated EDA dashboard that detects outliers, identifies missing patterns, and generates correlation matrices in real-time — eliminating 70% of manual profiling time.',
+        link: 'https://github.com/rajveersinghal',
+        year: '2024',
     },
     {
-        title: "YouTube Summarizer (RAG)",
-        category: "LLM · LangChain",
-        desc: "Interactive RAG pipeline specialized in summarizing long-form video transcripts using OpenAI.",
-        explanation: "Built a document retrieval system using LangChain and a Vector Database (ChromaDB) to provide context-aware summaries.",
-        impact: "Reduced information extraction time for 1-hour videos to under 30 seconds of reading.",
-        tech: ["LangChain", "OpenAI", "Python", "ChromaDB"],
-        metrics: [
-            { label: "Retrieval", value: 95 },
-            { label: "Latency", value: 85 },
-            { label: "RAGas Score", value: 82 }
-        ],
-        hasDemo: true,
-        demoType: "RAG Pipeline Simulation",
-        demoLines: [
-            { text: "# Extracting Transcript via API...", color: "text-blue-400" },
-            { text: "Chunking text into 500-token segments...", color: "text-text-secondary" },
-            { text: "Generating Embeddings (ADA-002)...", color: "text-text-secondary" },
-            { text: "Query: 'What are the core ML findings?'", color: "text-yellow-500/80" },
-            { text: "RAG RESPONSE: 3 key findings extracted.", color: "text-accent", bold: true }
-        ],
-        link: "https://github.com/rajveersinghal/YouTubeSummarizer"
+        id: 'rag',
+        title: 'RAG Summarizer',
+        subtitle: 'YouTube Intelligence Engine',
+        category: 'LLM · LangChain',
+        accent: 'tertiary',
+        tags: ['LangChain', 'OpenAI', 'ChromaDB', 'FAISS'],
+        metric: { val: '30s', label: 'vs 1-hr Video' },
+        desc: 'Retrieval-Augmented Generation pipeline that extracts, chunks, and semantically indexes YouTube transcripts for instant context-aware Q&A and summarization.',
+        link: 'https://github.com/rajveersinghal',
+        year: '2024',
     },
     {
-        title: "Movie Recommendation",
-        category: "RecSys · Similarity",
-        desc: "Content-based recommendation engine using cosine similarity to suggest movies.",
-        explanation: "Developed a similarity matrix across a 50k+ movie dataset based on genre, cast, and keyword metadata.",
-        impact: "Implemented a cold-start resistant engine that performs with sub-hundred millisecond latency.",
-        tech: ["Python", "Pandas", "Scikit-Learn", "NLTK"],
-        metrics: [
-            { label: "Latency", value: 98 },
-            { label: "Precision@K", value: 76 },
-            { label: "Recall@K", value: 81 }
-        ],
-        hasDemo: true,
-        demoType: "Similarity Matrix Search",
-        demoLines: [
-            { text: "# Input: 'The Inception'...", color: "text-blue-400" },
-            { text: "Filtering Metadata: Sci-Fi, Nolan, Thriller", color: "text-text-secondary" },
-            { text: "Calculating Cosine Similarity Matrix...", color: "text-text-secondary" },
-            { text: "TOP MATCH: 'Interstellar' (0.89)", color: "text-accent", bold: true },
-            { text: "Other: Tenet (0.84), Shutter Island (0.78)", color: "text-text-secondary text-xs" }
-        ],
-        link: "https://github.com/rajveersinghal/MovieRecommendation"
+        id: 'movies',
+        title: 'Movie Recommender',
+        subtitle: 'Content-Based Engine',
+        category: 'RecSys · Similarity',
+        accent: 'primary',
+        tags: ['Scikit-learn', 'Pandas', 'NLTK', 'Cosine Sim'],
+        metric: { val: '<100ms', label: 'Inference' },
+        desc: 'Cold-start-resistant content-based recommendation engine over 50k+ titles using metadata vectors and cosine similarity with sub-100ms latency.',
+        link: 'https://github.com/rajveersinghal',
+        year: '2023',
     },
     {
-        title: "House Price Predictor",
-        category: "Regression · XGBoost",
-        desc: "ML model predicting real estate prices based on nuanced environmental factors.",
-        explanation: "Implemented an XGBoost Regressor with heavy feature engineering for seasonality and district-level economic shifts.",
-        impact: "Reduced prediction error (RMSE) by 15% compared to the baseline linear model.",
-        tech: ["XGBoost", "NumPy", "Scikit-Learn", "Seaborn"],
-        metrics: [
-            { label: "RMSE Down", value: 15 },
-            { label: "R² Score", value: 88 },
-            { label: "Features", value: 25 }
-        ],
-        hasDemo: true,
-        demoType: "Regression Prediction",
-        demoLines: [
-            { text: "# Fetching Regional Real Estate Data...", color: "text-blue-400" },
-            { text: "Inputs: 2400 sqft, 3 BHK, Sonepat District", color: "text-text-secondary" },
-            { text: "Applying XGBoost Regressor (Weight: Economic Index)", color: "text-text-secondary" },
-            { text: "ESTIMATED VALUE: ₹1.42 Cr", color: "text-accent", bold: true },
-            { text: "Confidence Interval: +/- ₹4.5L", color: "text-text-secondary text-xs" }
-        ],
-        link: "https://github.com/rajveersinghal/HousePricePrediction"
+        id: 'house',
+        title: 'House Price Predictor',
+        subtitle: 'XGBoost Regression Model',
+        category: 'Regression · ML',
+        accent: 'secondary',
+        tags: ['XGBoost', 'Feature Eng.', 'NumPy', 'Seaborn'],
+        metric: { val: '−15%', label: 'RMSE vs Baseline' },
+        desc: 'Property valuation model with engineered features for seasonality and district economics. Reduced RMSE by 15% over baseline linear regression using XGBoost with grid-search tuning.',
+        link: 'https://github.com/rajveersinghal',
+        year: '2023',
     },
     {
-        title: "Netflix Data Dashboard",
-        category: "Analytics · Power BI",
-        desc: "Comprehensive business intelligence dashboard analyzing Netflix content trends.",
-        explanation: "Created interactive visualizations covering geographic content distribution, genre saturation, and release timing.",
-        impact: "Identified optimal release windows and high-growth genre clusters in the APAC region.",
-        tech: ["Power BI", "SQL", "Excel", "Data Cleaning"],
-        metrics: [
-            { label: "Data Integrity", value: 100 },
-            { label: "Insight Depth", value: 90 },
-            { label: "UI Rating", value: 95 }
-        ],
-        hasDemo: true,
-        demoType: "BI Dashboard Insight",
-        demoLines: [
-            { text: "# Refreshing Power BI Dataset...", color: "text-blue-400" },
-            { text: "Calculating YoY Content Growth (APAC)...", color: "text-text-secondary" },
-            { text: "Slicing by: 'Originals vs Licensed'", color: "text-text-secondary" },
-            { text: "TREND: 30% Increase in K-Dramas", color: "text-accent", bold: true },
-            { text: "Optimal Release Day: Friday (8PM IST)", color: "text-text-secondary text-xs" }
-        ],
-        link: "https://github.com/rajveersinghal/NetflixDashboard"
-    }
+        id: 'netflix',
+        title: 'Netflix BI Dashboard',
+        subtitle: 'Streaming Content Analytics',
+        category: 'Analytics · Power BI',
+        accent: 'tertiary',
+        tags: ['Power BI', 'SQL', 'Data Cleaning', 'DAX'],
+        metric: { val: '100%', label: 'Data Integrity' },
+        desc: 'Executive BI dashboard revealing genre trends, release timing optimization, and APAC content growth patterns across 8,000+ Netflix titles.',
+        link: 'https://github.com/rajveersinghal',
+        year: '2023',
+    },
 ];
 
-export default function Projects() {
-    const [selectedDemo, setSelectedDemo] = useState(null);
+const accentMap = {
+    primary: {
+        tag: 'tag',
+        text: 'text-primary',
+        bg: 'bg-primary/5',
+        border: 'border-primary/15',
+        topBar: 'from-primary/40 via-primary/20 to-transparent',
+        metricColor: 'text-primary',
+        glowShadow: '0 0 30px rgba(0,212,255,0.08)',
+    },
+    secondary: {
+        tag: 'tag tag-purple',
+        text: 'text-secondary',
+        bg: 'bg-secondary/5',
+        border: 'border-secondary/15',
+        topBar: 'from-secondary/40 via-secondary/20 to-transparent',
+        metricColor: 'text-secondary',
+        glowShadow: '0 0 30px rgba(168,85,247,0.08)',
+    },
+    tertiary: {
+        tag: 'tag tag-green',
+        text: 'text-tertiary',
+        bg: 'bg-tertiary/5',
+        border: 'border-tertiary/15',
+        topBar: 'from-tertiary/40 via-tertiary/20 to-transparent',
+        metricColor: 'text-tertiary',
+        glowShadow: '0 0 30px rgba(16,185,129,0.08)',
+    },
+};
+
+function ProjectCard({ project, index }) {
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const xSpring = useSpring(x, { stiffness: 150, damping: 20 });
+    const ySpring = useSpring(y, { stiffness: 150, damping: 20 });
+    const rotateX = useTransform(ySpring, [-0.5, 0.5], ['8deg', '-8deg']);
+    const rotateY = useTransform(xSpring, [-0.5, 0.5], ['-8deg', '8deg']);
+
+    const a = accentMap[project.accent];
+
+    const handleMouseMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        x.set((e.clientX - rect.left) / rect.width - 0.5);
+        y.set((e.clientY - rect.top) / rect.height - 0.5);
+    };
+    const handleMouseLeave = () => { x.set(0); y.set(0); };
 
     return (
-        <SectionParams id="projects" className="bg-bg-dark">
-            <div className="text-center mb-16 px-4">
-                <h2 className="text-3xl md:text-4xl font-black text-text-primary mb-4 tracking-tight">Applied Intelligence</h2>
-                <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-                    Evidence-based results delivered through rigorous data modeling.
-                </p>
-            </div>
+        <motion.article
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.08, duration: 0.5 }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+            className={`glass-panel-bright rounded-2xl border ${a.border} overflow-hidden flex flex-col group transition-all duration-300`}
+            whileHover={{ boxShadow: `${a.glowShadow}, 0 24px 48px rgba(0,0,0,0.4)` }}
+        >
+            {/* Top gradient bar */}
+            <div className={`h-[2px] bg-gradient-to-r ${a.topBar}`} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map((project, idx) => (
-                    <motion.div
-                        key={project.title}
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: idx * 0.1 }}
-                        className="group flex flex-col bg-bg-card/30 backdrop-blur-sm border border-white/5 rounded-2xl p-6 hover:border-accent/40 transition-all duration-300 relative overflow-hidden"
-                    >
-                        {/* Status/Category */}
-                        <div className="flex justify-between items-start mb-4">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent/80 bg-accent/5 px-2 py-1 rounded">
-                                {project.category}
-                            </span>
+            <div className="p-6 flex flex-col flex-1" style={{ transform: 'translateZ(20px)' }}>
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <div className={`text-[9px] font-mono font-bold tracking-[0.3em] uppercase mb-1 ${a.text}`}>
+                            {project.category}
                         </div>
-
-                        <h3 className="text-2xl font-black text-text-primary mb-3 group-hover:text-accent transition-colors">
+                        <h3 className="font-headline font-black text-xl text-on-surface group-hover:text-primary transition-colors">
                             {project.title}
                         </h3>
-
-                        <p className="text-sm text-text-secondary mb-4 leading-relaxed line-clamp-2">
-                            {project.desc}
-                        </p>
-
-                        <div className="mb-6">
-                            <h4 className="text-[11px] font-bold uppercase text-text-primary/60 mb-2">Impact</h4>
-                            <p className="text-sm text-text-primary font-medium italic">
-                                "{project.impact}"
-                            </p>
+                        <div className="text-xs text-on-surface-variant font-light mt-0.5">
+                            {project.subtitle}
                         </div>
-
-                        {/* Visual Metrics Insight */}
-                        <div className="mt-auto pt-6 border-t border-white/5">
-                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mb-4">Model Insights</h4>
-                            <div className="grid grid-cols-3 gap-3">
-                                {project.metrics.map(metric => (
-                                    <div key={metric.label}>
-                                        <div className="flex justify-between items-end mb-1">
-                                            <span className="text-[9px] text-text-secondary">{metric.label}</span>
-                                            <span className="text-[10px] font-bold text-accent">{metric.value}%</span>
-                                        </div>
-                                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                whileInView={{ width: `${metric.value}%` }}
-                                                transition={{ duration: 1, delay: 0.5 }}
-                                                className="h-full bg-accent"
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="flex gap-3 mt-6">
-                            {project.hasDemo && (
-                                <button
-                                    onClick={() => setSelectedDemo(project)}
-                                    className="flex-1 py-2 rounded-lg bg-accent/10 border border-accent/20 text-accent text-xs font-bold hover:bg-accent hover:text-bg-dark transition-all"
-                                >
-                                    Interactive Demo
-                                </button>
-                            )}
-                            <a
-                                href={project.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`py-2 rounded-lg border border-white/10 text-text-secondary text-xs font-bold hover:bg-white/5 transition-all text-center ${project.hasDemo ? 'flex-1' : 'w-full'}`}
-                            >
-                                Source Code
-                            </a>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Demo Modal */}
-            <AnimatePresence>
-                {selectedDemo && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedDemo(null)}
-                            className="absolute inset-0 bg-bg-dark/80 backdrop-blur-md"
-                        />
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            className="bg-bg-card border border-white/10 p-8 rounded-2xl max-w-lg w-full relative z-10"
-                        >
-                            <div className="flex justify-between items-start mb-6">
-                                <div>
-                                    <h3 className="text-2xl font-bold text-text-primary">{selectedDemo.title}</h3>
-                                    <p className="text-sm text-text-secondary uppercase tracking-widest text-[10px] font-bold">{selectedDemo.demoType}</p>
-                                </div>
-                                <button onClick={() => setSelectedDemo(null)} className="text-text-secondary hover:text-white-600 transition-colors p-2">✕</button>
-                            </div>
-
-                            <div className="bg-bg-dark/50 rounded-lg p-6 font-mono text-sm mb-6 border border-white/5 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-2 opacity-20 text-[10px] uppercase font-bold">Simulation v1.0</div>
-                                {selectedDemo.demoLines.map((line, i) => (
-                                    <motion.p
-                                        key={i}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.15 }}
-                                        className={`${line.color} ${line.bold ? 'font-bold' : ''} ${i === selectedDemo.demoLines.length - 1 ? '' : 'mb-2'}`}
-                                    >
-                                        {line.text}
-                                    </motion.p>
-                                ))}
-                            </div>
-
-                            <button
-                                onClick={() => setSelectedDemo(null)}
-                                className="w-full py-4 bg-accent text-bg-dark font-black uppercase text-xs tracking-widest rounded-lg hover:bg-accent/90 transition-all shadow-lg shadow-accent/10 active:scale-[0.98]"
-                            >
-                                Close Simulation
-                            </button>
-                        </motion.div>
                     </div>
-                )}
-            </AnimatePresence>
-        </SectionParams>
+                    <div className="text-right shrink-0 ml-3">
+                        <div className={`font-mono font-black text-2xl ${a.metricColor} text-glow`}>
+                            {project.metric.val}
+                        </div>
+                        <div className="text-[9px] font-mono text-on-surface-variant uppercase tracking-wider">
+                            {project.metric.label}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-on-surface-variant text-sm leading-relaxed mb-5 flex-1">
+                    {project.desc}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                    {project.tags.map(tag => (
+                        <span key={tag} className={a.tag}>{tag}</span>
+                    ))}
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+                    <span className="text-[10px] font-mono text-on-surface-variant/40">{project.year}</span>
+                    <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-1.5 text-[11px] font-mono font-bold ${a.text} uppercase tracking-wider hover:gap-3 transition-all`}
+                    >
+                        View Code
+                        <span className="material-symbols-outlined text-base">arrow_outward</span>
+                    </a>
+                </div>
+            </div>
+        </motion.article>
+    );
+}
+
+export default function Projects() {
+    return (
+        <section className="py-28 px-6 lg:px-16 relative bg-surface-container-low scroll-mt-24" id="projects">
+            <div className="absolute inset-0 grid-overlay opacity-20 pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6"
+                >
+                    <div>
+                        <div className="section-label mb-6">
+                            <span className="material-symbols-outlined text-sm">inventory_2</span>
+                            Data Archive
+                        </div>
+                        <h2 className="section-title">
+                            Applied{' '}
+                            <span className="gradient-text-cyan-purple">Intelligence</span>
+                        </h2>
+                        <p className="text-on-surface-variant mt-3 max-w-lg text-base">
+                            Six production-grade systems built with measurable outcomes and real data.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="flex gap-2">
+                            {['primary', 'secondary', 'tertiary'].map((c) => (
+                                <div key={c} className={`w-3 h-3 rounded-full ${c === 'primary' ? 'bg-primary' : c === 'secondary' ? 'bg-secondary' : 'bg-tertiary'}`} style={{ boxShadow: `0 0 8px ${c === 'primary' ? '#00d4ff' : c === 'secondary' ? '#a855f7' : '#10b981'}` }} />
+                            ))}
+                        </div>
+                        <span className="text-[10px] font-mono text-on-surface-variant uppercase tracking-wider">6 Projects</span>
+                    </div>
+                </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ perspective: '1200px' }}>
+                    {projects.map((project, i) => (
+                        <ProjectCard key={project.id} project={project} index={i} />
+                    ))}
+                </div>
+            </div>
+        </section>
     );
 }

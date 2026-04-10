@@ -1,169 +1,219 @@
+import { motion } from 'framer-motion';
 import { useState } from 'react';
-import SectionParams from '../ui/SectionParams';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Contact() {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [status, setStatus] = useState('idle'); // idle | sending | sent
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        // Simulate API call - User can integrate Formspree by changing action
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-        setFormData({ name: '', email: '', message: '' });
+        setStatus('sending');
+        await new Promise(r => setTimeout(r, 1500));
+        setStatus('sent');
     };
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const links = [
+        { icon: 'mail', label: 'Email', val: 'singhalrajveer7@gmail.com', href: 'mailto:singhalrajveer7@gmail.com', color: 'primary' },
+        { icon: 'link', label: 'LinkedIn', val: '/in/rajveer-singhal', href: 'https://linkedin.com/in/rajveer-singhal', color: 'secondary' },
+        { icon: 'code', label: 'GitHub', val: '@rajveersinghal', href: 'https://github.com/rajveersinghal', color: 'tertiary' },
+        { icon: 'phone', label: 'Phone', val: '+91 9523890859', href: 'tel:+919523890859', color: 'primary' },
+    ];
+
+    const colorMap = {
+        primary: { icon: 'text-primary', border: 'border-primary/15', hover: 'hover:border-primary/40', bg: 'bg-primary/5' },
+        secondary: { icon: 'text-secondary', border: 'border-secondary/15', hover: 'hover:border-secondary/40', bg: 'bg-secondary/5' },
+        tertiary: { icon: 'text-tertiary', border: 'border-tertiary/15', hover: 'hover:border-tertiary/40', bg: 'bg-tertiary/5' },
     };
 
     return (
-        <SectionParams id="contact" className="bg-bg-card/50">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center h-full">
+        <section className="py-28 px-6 lg:px-16 relative bg-surface-container-low scroll-mt-24" id="contact">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(0,212,255,0.04),transparent_60%)] pointer-events-none" />
 
-                {/* Left: Contact Info */}
+            <div className="max-w-6xl mx-auto">
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+                    className="text-center mb-16"
                 >
-                    <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">Let’s Connect</h2>
-                    <p className="text-base md:text-lg text-accent font-medium mb-4 leading-tight">
-                        Open to Data Science opportunities where analytical rigor and practical ML systems drive real impact.
-                    </p>
-
-                    <p className="text-text-secondary leading-relaxed mb-6 max-w-lg text-sm md:text-base">
-                        I am currently seeking entry-level opportunities in Data Science and Analytics. If you’re working on a data-driven initiative or have an opportunity aligned with my skills, I would be glad to connect.
-                    </p>
-
-                    <div className="space-y-3 text-sm md:text-base">
-                        <a href="mailto:singhalrajveer7@gmail.com" className="flex items-center space-x-3 text-text-primary hover:text-accent transition-colors group">
-                            <span className="p-2 bg-white/5 rounded-full group-hover:bg-accent/10 transition-colors">📧</span>
-                            <span>singhalrajveer7@gmail.com</span>
-                        </a>
-                        <div className="flex items-center space-x-3 text-text-secondary">
-                            <span className="p-2 bg-white/5 rounded-full">📍</span>
-                            <span>New Delhi, India</span>
-                        </div>
-                        <div className="flex items-center space-x-3 text-text-secondary">
-                            <span className="p-2 bg-white/5 rounded-full">📞</span>
-                            <span>+91 9523890859</span>
-                        </div>
-                        <div className="flex items-center space-x-6 pt-2 pl-2">
-                            <a href="https://linkedin.com/in/rajveer-singhal" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-white transition-colors">LinkedIn</a>
-                            <a href="https://github.com/rajveersinghal" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-white transition-colors">GitHub</a>
-                        </div>
+                    <div className="section-label mx-auto mb-6 w-fit">
+                        <span className="material-symbols-outlined text-sm">mail</span>
+                        Neural Handshake
                     </div>
+                    <h2 className="section-title">
+                        Let's Build{' '}
+                        <span className="gradient-text-cyan-purple">Together</span>
+                    </h2>
+                    <p className="text-on-surface-variant mt-4 max-w-lg mx-auto text-base">
+                        Open to full-time roles, internships, and collaborative data science projects. Reach out through any channel below.
+                    </p>
                 </motion.div>
 
-                {/* Right: Form - Compact */}
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="bg-bg-dark border border-white/5 p-6 rounded-xl relative overflow-hidden"
-                >
-                    <AnimatePresence mode="wait">
-                        {isSubmitted ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    {/* Left: Contact cards + terminal */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="space-y-4"
+                    >
+                        {/* Contact method grid */}
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                            {links.map((l) => {
+                                const c = colorMap[l.color];
+                                return (
+                                    <a
+                                        key={l.label}
+                                        href={l.href}
+                                        target={l.href.startsWith('http') ? '_blank' : undefined}
+                                        rel="noopener noreferrer"
+                                        className={`p-4 rounded-xl glass-panel border ${c.border} ${c.hover} transition-all group flex items-start gap-3`}
+                                    >
+                                        <div className={`w-8 h-8 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}>
+                                            <span className={`material-symbols-outlined text-sm ${c.icon}`}>{l.icon}</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-[10px] font-mono text-on-surface-variant uppercase tracking-wider mb-0.5">{l.label}</div>
+                                            <div className={`text-xs font-mono font-medium ${c.icon} break-all`}>{l.val}</div>
+                                        </div>
+                                    </a>
+                                );
+                            })}
+                        </div>
+
+                        {/* Terminal block */}
+                        <div className="glass-panel-strong rounded-2xl overflow-hidden">
+                            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-outline-variant/20 bg-surface-container-highest/50">
+                                <div className="flex gap-1.5">
+                                    <div className="w-3 h-3 rounded-full bg-error/80"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                                    <div className="w-3 h-3 rounded-full bg-tertiary/80"></div>
+                                </div>
+                                <span className="text-[10px] font-mono text-on-surface-variant/50 ml-2">bash — rajveer@neural.sys</span>
+                            </div>
+                            <div className="p-5 font-mono text-sm space-y-2">
+                                <div className="flex gap-2 text-on-surface-variant/60">
+                                    <span className="text-tertiary">$</span>
+                                    <span>whoami</span>
+                                </div>
+                                <div className="text-on-surface pl-4">rajveer_singhal → MCA | Data Scientist</div>
+                                <div className="flex gap-2 text-on-surface-variant/60 mt-2">
+                                    <span className="text-tertiary">$</span>
+                                    <span>cat status.json</span>
+                                </div>
+                                <div className="pl-4 space-y-1 text-[12px] leading-relaxed">
+                                    <div><span className="text-on-surface-variant">{`{`}</span></div>
+                                    <div className="pl-4"><span className="text-secondary">"availability"</span><span className="text-on-surface-variant">: </span><span className="text-tertiary">"Open to Opportunities"</span><span className="text-on-surface-variant">,</span></div>
+                                    <div className="pl-4"><span className="text-secondary">"location"</span><span className="text-on-surface-variant">: </span><span className="text-tertiary">"New Delhi, India"</span><span className="text-on-surface-variant">,</span></div>
+                                    <div className="pl-4"><span className="text-secondary">"response_time"</span><span className="text-on-surface-variant">: </span><span className="text-tertiary">"&lt; 24 hours"</span></div>
+                                    <div><span className="text-on-surface-variant">{`}`}</span></div>
+                                </div>
+                                <div className="flex gap-2 text-on-surface-variant/60 mt-1">
+                                    <span className="text-tertiary">$</span>
+                                    <span className="blink-cursor"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Right: Contact Form */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="glass-panel-bright rounded-2xl p-8 border border-primary/8"
+                    >
+                        {status === 'sent' ? (
                             <motion.div
-                                key="success"
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                className="h-[300px] flex flex-col items-center justify-center text-center"
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="h-full flex flex-col items-center justify-center text-center py-12"
                             >
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ type: "spring", damping: 10, stiffness: 100 }}
-                                    className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center text-2xl text-accent mb-4"
-                                >
-                                    ✓
-                                </motion.div>
-                                <h3 className="text-xl font-bold text-text-primary mb-2">Message Sent Successfully!</h3>
-                                <p className="text-sm text-text-secondary">Thank you for reaching out. I'll get back to you within 24–48 hours.</p>
+                                <div className="w-16 h-16 rounded-full bg-tertiary/10 border border-tertiary/30 flex items-center justify-center mb-4">
+                                    <span className="material-symbols-outlined text-tertiary text-3xl">check_circle</span>
+                                </div>
+                                <h3 className="font-headline font-black text-2xl text-on-surface mb-2">Message Transmitted</h3>
+                                <p className="text-on-surface-variant text-sm">I'll get back to you within 24 hours.</p>
                                 <button
-                                    onClick={() => setIsSubmitted(false)}
-                                    className="mt-6 px-4 py-2 border border-accent/20 text-accent hover:bg-accent/10 rounded text-xs uppercase tracking-widest font-bold transition-all"
+                                    onClick={() => setStatus('idle')}
+                                    className="btn-outline mt-6 text-xs py-2 px-5"
                                 >
                                     Send Another
                                 </button>
                             </motion.div>
                         ) : (
-                            <motion.form
-                                key="form"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                onSubmit={handleSubmit}
-                                className="space-y-4"
-                            >
+                            <form onSubmit={handleSubmit} className="space-y-5">
                                 <div>
-                                    <label htmlFor="name" className="block text-xs font-bold text-text-secondary mb-1 uppercase tracking-wider">Name</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent transition-colors"
-                                        placeholder="Your Name"
-                                    />
+                                    <h3 className="font-headline font-black text-xl text-on-surface mb-1">Send a Message</h3>
+                                    <p className="text-on-surface-variant text-sm">Or connect via email, LinkedIn, or GitHub above.</p>
                                 </div>
-                                <div>
-                                    <label htmlFor="email" className="block text-xs font-bold text-text-secondary mb-1 uppercase tracking-wider">Email</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent transition-colors"
-                                        placeholder="Your Email"
-                                    />
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-mono uppercase tracking-wider text-on-surface-variant mb-1.5">Name</label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            required
+                                            placeholder="Your name"
+                                            className="w-full bg-surface border border-outline-variant/30 rounded-lg px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary/40 focus:bg-surface-container transition-all font-mono"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-mono uppercase tracking-wider text-on-surface-variant mb-1.5">Email</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            required
+                                            placeholder="your@email.com"
+                                            className="w-full bg-surface border border-outline-variant/30 rounded-lg px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary/40 focus:bg-surface-container transition-all font-mono"
+                                        />
+                                    </div>
                                 </div>
+
                                 <div>
-                                    <label htmlFor="message" className="block text-xs font-bold text-text-secondary mb-1 uppercase tracking-wider">Message</label>
+                                    <label className="block text-[10px] font-mono uppercase tracking-wider text-on-surface-variant mb-1.5">Message</label>
                                     <textarea
-                                        id="message"
                                         name="message"
                                         value={formData.message}
                                         onChange={handleChange}
                                         required
-                                        rows={3}
-                                        className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent transition-colors resize-none"
-                                        placeholder="What's on your mind?"
+                                        rows={5}
+                                        placeholder="Tell me about the opportunity or project..."
+                                        className="w-full bg-surface border border-outline-variant/30 rounded-lg px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary/40 focus:bg-surface-container transition-all font-mono resize-none"
                                     />
                                 </div>
 
-                                <button
+                                <motion.button
                                     type="submit"
-                                    disabled={isSubmitting}
-                                    className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-3 rounded transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center text-sm shadow-lg shadow-accent/20"
+                                    disabled={status === 'sending'}
+                                    className="btn-primary w-full justify-center"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                 >
-                                    {isSubmitting ? (
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            <span>Analyzing...</span>
-                                        </div>
+                                    {status === 'sending' ? (
+                                        <>
+                                            <span className="w-4 h-4 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin" />
+                                            Transmitting...
+                                        </>
                                     ) : (
-                                        'Deploy Message'
+                                        <>
+                                            Transmit Message
+                                            <span className="material-symbols-outlined text-base">send</span>
+                                        </>
                                     )}
-                                </button>
-                            </motion.form>
+                                </motion.button>
+                            </form>
                         )}
-                    </AnimatePresence>
-                </motion.div>
-
+                    </motion.div>
+                </div>
             </div>
-        </SectionParams>
+        </section>
     );
 }
